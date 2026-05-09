@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pitch Dark Broadcasting — Coming Soon</title>
+
+<style>
+:root{
+  --line:#342711;
+  --gold:#b7893d;
+  --gold-soft:#d4ad67;
+  --amber:#ff9f1c;
+  --text:#c99c51;
+  --red:#4a0907;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background:
+    radial-gradient(circle at top center,rgba(150,96,24,.14),transparent 34%),
+    linear-gradient(180deg,#080603,#020201);
+  color:var(--text);
+  font-family:Georgia,"Times New Roman",serif;
+}
+
+.page{
+  width:100vw;
+  height:100vh;
+  padding:8px;
+}
+
+.frame{
+  width:100%;
+  height:100%;
+  border:1px solid var(--line);
+  background:
+    linear-gradient(rgba(255,166,44,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,166,44,.015) 1px,transparent 1px),
+    rgba(0,0,0,.45);
+  background-size:22px 22px;
+  box-shadow:
+    inset 0 0 0 1px rgba(205,156,70,.08),
+    inset 0 0 80px rgba(0,0,0,.96);
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  overflow:hidden;
+}
+
+/* TOP SYSTEM */
+.top-bank{min-height:168px;
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 280px;
+  gap:8px;
+  min-height:0;
+}
+
+.clock-bank{
+  display:grid;
+  grid-template-columns:repeat(7,112px);
+  justify-content:center;
+  align-items:start;
+  gap:0;
+  border:1px solid var(--line);
+  background:rgba(8,7,4,.86);
+  padding:10px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,.92);
+}
+
+.clock-card{
+  text-align:center;
+  padding:0 2px;
+  border-right:1px solid rgba(183,137,61,.12);
+}
+
+.clock-card:last-child{border-right:0}
+
+.clock{
+  width:76px;
+  height:76px;
+  margin:0 auto 5px;
+  border-radius:50%;
+  position:relative;
+  border:2px solid #c6923d;
+  background:
+    radial-gradient(circle at 32% 24%,rgba(255,220,150,.18),transparent 16%),
+    radial-gradient(circle at center,#17110a 0%,#090704 70%,#020201 100%);
+  box-shadow:
+    inset 0 0 18px rgba(0,0,0,.96),
+    inset 0 0 0 1px rgba(255,184,70,.16),
+    0 0 14px rgba(255,159,28,.22);
+}
+
+.clock:before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border:1px solid rgba(212,173,103,.42);
+  border-radius:50%;
+}
+
+.tick{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:1px;
+  height:5px;
+  background:#e0ad4f;
+  transform-origin:0 0;
+  opacity:.78;
+  box-shadow:0 0 4px rgba(255,159,28,.35);
+}
+
+.hand{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform-origin:50% 100%;
+  border-radius:4px;
+}
+
+.hour{
+  width:4px;
+  height:19px;
+  margin-left:-2px;
+  margin-top:-19px;
+  background:#d9a84e;
+  box-shadow:0 0 5px rgba(255,159,28,.35);
+}
+.minute{
+  width:2px;
+  height:29px;
+  margin-left:-1px;
+  margin-top:-29px;
+  background:#f0bd65;
+  box-shadow:0 0 5px rgba(255,159,28,.35);
+}
+.second{
+  width:1.5px;
+  height:32px;
+  margin-left:-.75px;
+  margin-top:-32px;
+  background:#c01810;
+  opacity:.95;
+  box-shadow:0 0 7px rgba(220,30,20,.65);
+}
+
+.pin{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#e3ae50;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 9px rgba(255,159,28,.7);
+}
+
+.city{
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:#d2a45b;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.time{
+  margin-top:1px;
+  font-family:"Courier New",monospace;
+  font-size:11px;
+  color:#b7893d;
+}
+
+/* WAVEFORM */
+.signal-bed{
+  grid-column:1/-1;
+  margin-top:5px;
+  border-top:1px solid rgba(183,137,61,.14);
+  padding-top:5px;
+  display:grid;
+  grid-template-columns:1fr 240px;
+  gap:8px;
+  align-items:center;
+}
+
+.wave-wrap{
+  height:60px;
+  border:1px solid rgba(183,137,61,.18);
+  background:linear-gradient(180deg,rgba(255,159,28,.04),rgba(0,0,0,.18)),#050403;
+  box-shadow:inset 0 0 20px rgba(0,0,0,.9);
+  overflow:hidden;
+  position:relative;
+}
+
+.wave-wrap:before{
+  content:" ROOM SIGNAL";
+  position:absolute;
+  left:8px;
+  top:5px;
+  font-family:"Courier New",monospace;
+  font-size:13px;
+  letter-spacing:1.2px;
+  color:rgba(212,173,103,.45);
+  z-index:2;
+}
+
+#waveCanvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.mic-button{
+  height:38px;
+  border:1px solid rgba(140,47,34,.75);
+  border-radius:3px;
+  background:linear-gradient(180deg,#6a130e 0%,#3d0705 52%,#1d0201 100%);
+  color:#d2a45b;
+  font-family:"Courier New",monospace;
+  font-size:13px;
+  letter-spacing:.8px;
+  cursor:pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,210,150,.14),
+    inset 0 -3px 0 rgba(0,0,0,.45),
+    0 2px 0 rgba(0,0,0,.7);
+}
+
+.mic-button:hover{filter:brightness(1.12);color:#f0c67d}
+
+.mic-button.active{
+  color:#ffd084;
+  border-color:rgba(255,159,28,.55);
+  background:linear-gradient(180deg,#a32418 0%,#68110c 58%,#2b0302 100%);
+}
+
+/* ROUTING */
+.routing-panel{height:100%;min-height:0;
+  border:1px solid var(--line);
+  background:
+    radial-gradient(circle at 50% 16%,rgba(255,159,28,.08),transparent 35%),
+    linear-gradient(180deg,#171109,#080604);
+  padding:8px;
+  box-shadow:inset 0 0 28px rgba(0,0,0,.92);
+}
+
+.routing-title{
+  text-align:center;
+  border:1px solid rgba(183,137,61,.35);
+  padding:4px;
+  margin-bottom:6px;
+  color:#e1ba72;
+  font-size:10px;
+  letter-spacing:1.6px;
+}
+
+.route{
+  display:grid;
+  grid-template-columns:16px 1fr;
+  gap:7px;
+  align-items:center;
+  margin:5px 0;
+}
+
+.lamp{
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  border:1px solid rgba(255,180,70,.45);
+  background:#080503;
+  box-shadow:inset 0 0 7px rgba(0,0,0,.95);
+}
+
+.route.active .lamp{
+  background:var(--amber);
+  box-shadow:
+    0 0 7px rgba(255,159,28,.95),
+    0 0 18px rgba(255,159,28,.55);
+}
+
+.route-button{display:flex;align-items:center;
+  width:100%;
+  height:23px;
+  border:1px solid rgba(140,47,34,.75);
+  border-radius:3px;
+  background:linear-gradient(180deg,#7b1710 0%,#4a0907 47%,#250302 100%);
+  color:#d2a45b;
+  font-family:"Courier New",monospace;
+  font-size:13px;
+  letter-spacing:1px;
+  text-align:left;
+  padding-left:8px;
+  cursor:pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,210,150,.18),
+    inset 0 -3px 0 rgba(0,0,0,.45),
+    0 2px 0 rgba(0,0,0,.7);
+}
+
+.route-button:hover{color:#f0c67d;filter:brightness(1.08)}
+
+.route-button:active,
+.route.active .route-button{display:flex;align-items:center;
+  
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.78),0 0 10px rgba(255,159,28,.10);
+  background:linear-gradient(180deg,#a32418 0%,#68110c 58%,#2b0302 100%);
+}
+
+.route.active .route-button{display:flex;align-items:center;
+  color:#ffd084;
+  border-color:rgba(255,159,28,.55);
+}
+
+.routing-status{
+  margin-top:7px;
+  padding-top:6px;
+  border-top:1px solid rgba(183,137,61,.18);
+  display:flex;
+  justify-content:space-between;
+  font-family:"Courier New",monospace;
+  font-size:10px;
+  color:#765725;
+}
+
+/* TICKER */
+.ticker-strip{
+  flex:0 0 38px;
+  display:flex;
+  border:1px solid var(--line);
+  background:#050403;
+  overflow:hidden;
+  box-shadow:inset 0 0 18px rgba(0,0,0,.96),0 0 13px rgba(255,159,28,.06);
+}
+
+.ticker-label{
+  min-width:230px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-right:1px solid rgba(183,137,61,.25);
+  background:#100c07;
+  font-family:"Courier New",monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  color:#d8ac61;
+}
+
+.ticker-window{
+  flex:1;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+}
+
+.ticker{
+  white-space:nowrap;
+  padding-left:100%;
+  font-family:"Courier New",monospace;
+  color:var(--amber);
+  font-size:18px;
+  letter-spacing:1.2px;
+  text-shadow:0 0 9px rgba(255,159,28,.55);
+  animation:tickerMove 70s linear infinite;
+}
+
+.ticker.interrupt{
+  opacity:.2;
+  filter:blur(.8px);
+}
+
+@keyframes tickerMove{
+  from{transform:translateX(0)}
+  to{transform:translateX(-100%)}
+}
+
+/* HERO FITS REMAINING SCREEN */
+.hero{
+  flex:1 1 auto;
+  min-height:0;
+  position:relative;
+  border:1px solid var(--line);
+  overflow:hidden;
+  background:#030302;
+  box-shadow:
+    inset 0 0 0 1px rgba(205,156,70,.08),
+    inset 0 0 80px rgba(0,0,0,.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.hero img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+  filter:contrast(1.04) brightness(.92);
+}
+
+.hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.10),transparent 18%,rgba(0,0,0,.25) 100%),
+    radial-gradient(circle at center,transparent 48%,rgba(0,0,0,.28));
+  pointer-events:none;
+}
+
+/* AMBER PULSE */
+.pulse-light{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:var(--amber);
+  animation:pulseDouble 7s infinite;
+  z-index:50;
+}
+
+@keyframes pulseDouble{
+  0%,8%,100%{opacity:.3;box-shadow:0 0 5px rgba(255,159,28,.25)}
+  3%{opacity:1;box-shadow:0 0 21px rgba(255,159,28,.95)}
+  6%{opacity:.4}
+  11%{opacity:1;box-shadow:0 0 21px rgba(255,159,28,.95)}
+  16%{opacity:.3}
+}
+
+@media(max-width:1100px){
+  html,body{overflow:auto}
+  .page{height:auto;min-height:100vh}
+  .frame{height:auto;min-height:100vh}
+  .top-bank{min-height:168px;grid-template-columns:1fr}
+  .clock-bank{grid-template-columns:repeat(3,1fr)}
+  .hero{min-height:45vh}
+}
+
+@media(max-width:650px){
+  .clock-bank{grid-template-columns:repeat(2,1fr)}
+  .ticker-label{display:none}
+  .signal-bed{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+  <div class="frame">
+
+    <div class="top-bank">
+      <div class="clock-bank" id="clockBank">
+</div>
+      </div>
+
+      <aside class="routing-panel">
+        <div class="routing-title">SIGNAL ROUTING</div>
+
+        <div class="route active" data-feed="newswire"><span class="lamp"></span><button class="route-button">NEWSWIRE</button></div>
+        <div class="route" data-feed="weather"><span class="lamp"></span><button class="route-button">WEATHER</button></div>
+        <div class="route" data-feed="market"><span class="lamp"></span><button class="route-button">MARKET</button></div>
+        <div class="route" data-feed="transmissions"><span class="lamp"></span><button class="route-button">TRANSMISSIONS</button></div>
+        <div class="route" data-feed="archive"><span class="lamp"></span><button class="route-button">ARCHIVE</button></div>
+
+        
+      </aside>
+    </div>
+
+    <div class="ticker-strip">
+      <div class="ticker-label" id="tickerLabel">ACTIVE FEED: NEWSWIRE</div>
+      <div class="ticker-window"><div class="ticker" id="ticker"></div></div>
+    </div>
+
+    <section class="hero">
+      <img src="pdb_hero.png" alt="Pitch Dark Broadcasting vintage broadcast studio with central microphone and on air lights">
+    </section>
+
+  </div>
+</div>
+
+<div class="pulse-light" aria-hidden="true"></div>
+
+<script>
+const cities=[
+  {name:"TOKYO",tz:"Asia/Tokyo"},
+  {name:"SYDNEY",tz:"Australia/Sydney"},
+  {name:"NEW YORK",tz:"America/New_York"},
+  {name:"LONDON",tz:"Europe/London"},
+  {name:"FRANKFURT",tz:"Europe/Berlin"},
+  {name:"DUBAI",tz:"Asia/Dubai"},
+  {name:"HONG KONG",tz:"Asia/Hong_Kong"}
+];
+
+const feeds={
+  newswire:[
+    "BROADCAST SUITE IN DEVELOPMENT",
+    "LONDON // MANUSCRIPT RECEIVED",
+    "NEW YORK // EDITOR ACTIVE",
+    "TOKYO // LAYOUT COMPLETE",
+    "SYDNEY // ILLUSTRATION QUEUED",
+    "PITCH DARK BROADCASTING // COMING SOON"
+  ],
+  weather:[
+    "LONDON // RAIN // LOW VISIBILITY",
+    "DUBAI // CLEAR // 24°C",
+    "SINGAPORE // HUMID // 29°C",
+    "NEW YORK // OVERCAST // 9°C",
+    "TOKYO // CLEAR // 18°C",
+    "SYDNEY // NIGHT SIGNAL STABLE"
+  ],
+  market:[
+    "SIGNAL INDEX // RISING",
+    "BROADCAST QUEUE // ACTIVE",
+    "STATION NETWORK // EXPANDING",
+    "ARCHIVE LOAD // 72%",
+    "LISTENER SIGNAL // STABLE",
+    "VOXXING // FUTURE MEDIA PLATFORM"
+  ],
+  transmissions:[
+    "PDB-NET // SECURE CHANNEL ESTABLISHED",
+    "THE WORLD IS LISTENING",
+    "ON AIR WORLDWIDE",
+    "TRANSMISSION INTEGRITY // STABLE",
+    "PITCH DARK BROADCASTING // CONTROL ROOM ONLINE",
+    "MESSAGE RECEIVED // SOURCE OBSCURED"
+  ],
+  archive:[
+    "ARCHIVE VAULT // OPEN",
+    "BROADCAST LOGS // INDEXING",
+    "STATION RECORDS // STABLE",
+    "NIGHT TRANSMISSION // RECOVERED",
+    "HISTORICAL FILES // VERIFIED",
+    "VOXXING // ORIGINAL BUILD NOTES STORED"
+  ]
+};
+
+function addTicks(clock){
+  for(let i=0;i<12;i++){
+    const t=document.createElement("span");
+    t.className="tick";
+    t.style.transform=`rotate(${i*30}deg) translateY(-32px)`;
+    clock.appendChild(t);
+  }
+}
+
+function buildClocks(){
+  const bank=document.getElementById("clockBank");
+  const signalBed=bank.querySelector(".signal-bed");
+
+  cities.forEach(city=>{
+    const card=document.createElement("div");
+    card.className="clock-card";
+
+    const clock=document.createElement("div");
+    clock.className="clock";
+    addTicks(clock);
+
+    const hour=document.createElement("span");
+    hour.className="hand hour";
+
+    const minute=document.createElement("span");
+    minute.className="hand minute";
+
+    const second=document.createElement("span");
+    second.className="hand second";
+
+    const pin=document.createElement("span");
+    pin.className="pin";
+
+    clock.append(hour,minute,second,pin);
+
+    const label=document.createElement("div");
+    label.className="city";
+    label.textContent=city.name;
+
+    const time=document.createElement("div");
+    time.className="time";
+
+    card.append(clock,label,time);
+    bank.insertBefore(card,signalBed);
+    city.elements={hour,minute,second,time};
+  });
+}
+
+function updateClocks(){
+  const now=new Date();
+
+  cities.forEach(city=>{
+    const parts=new Intl.DateTimeFormat("en-GB",{
+      timeZone:city.tz,
+      hour:"2-digit",
+      minute:"2-digit",
+      second:"2-digit",
+      hour12:false
+    }).formatToParts(now);
+
+    const h=Number(parts.find(p=>p.type==="hour").value);
+    const m=Number(parts.find(p=>p.type==="minute").value);
+    const s=Number(parts.find(p=>p.type==="second").value);
+
+    city.elements.hour.style.transform=`rotate(${((h%12)*30)+(m*.5)}deg)`;
+    city.elements.minute.style.transform=`rotate(${(m*6)+(s*.1)}deg)`;
+    city.elements.second.style.transform=`rotate(${s*6}deg)`;
+    city.elements.time.textContent=`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+  });
+}
+
+function routeFeed(feed){
+  const ticker=document.getElementById("ticker");
+  const label=document.getElementById("tickerLabel");
+
+  
+  ticker.classList.add("interrupt");
+
+  setTimeout(()=>{
+    const stream=feeds[feed].join("     ◆     ");
+    ticker.textContent=stream+"     ◆     "+stream+"     ◆     "+stream;
+    ticker.style.animation="none";
+    ticker.offsetHeight;
+    ticker.style.animation="";
+    ticker.classList.remove("interrupt");
+    label.textContent="ACTIVE FEED: "+feed.toUpperCase();
+    state.textContent="";
+  },420);
+}
+
+document.querySelectorAll(".route").forEach(route=>{
+  route.addEventListener("click",()=>{
+    document.querySelectorAll(".route").forEach(r=>r.classList.remove("active"));
+    route.classList.add("active");
+    routeFeed(route.dataset.feed);
+  });
+});
+
+buildClocks();
+updateClocks();
+setInterval(updateClocks,1000);
+routeFeed("newswire");
+
+/* WAVEFORM + OPTIONAL MICROPHONE */
+const canvas=document.getElementById("waveCanvas");
+const ctx=canvas.getContext("2d");
+const micButton=document.getElementById("micButton");
+
+let analyser=null;
+let audioData=null;
+let micActive=false;
+let waveT=0;
+
+function resizeWave(){
+  const r=canvas.getBoundingClientRect();
+  canvas.width=Math.max(300,Math.floor(r.width*window.devicePixelRatio));
+  canvas.height=Math.max(60,Math.floor(r.height*window.devicePixelRatio));
+}
+window.addEventListener("resize",resizeWave);
+resizeWave();
+
+function drawWave(){
+  const w=canvas.width;
+  const h=canvas.height;
+
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle="rgba(4,3,2,.92)";
+  ctx.fillRect(0,0,w,h);
+
+  ctx.strokeStyle="rgba(255,159,28,.10)";
+  ctx.lineWidth=1;
+
+  for(let x=0;x<w;x+=Math.floor(w/28)){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,h);
+    ctx.stroke();
+  }
+
+  ctx.beginPath();
+  ctx.strokeStyle="rgba(255,159,28,.88)";
+  ctx.lineWidth=Math.max(1.2,window.devicePixelRatio*1.2);
+
+  const mid=h/2;
+  const bars=160;
+
+  if(micActive && analyser && audioData){
+    analyser.getByteTimeDomainData(audioData);
+
+    for(let i=0;i<bars;i++){
+      const idx=Math.floor(i/bars*audioData.length);
+      const v=(audioData[idx]-128)/128;
+      const x=i/(bars-1)*w;
+      const y=mid+v*h*.38;
+
+      if(i===0)ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+  }else{
+    for(let i=0;i<bars;i++){
+      const x=i/(bars-1)*w;
+      const v=
+        Math.sin(i*.22+waveT)*.28+
+        Math.sin(i*.057+waveT*1.8)*.16+
+        Math.sin(i*.71+waveT*.38)*.045;
+      const y=mid+v*h*.38;
+
+      if(i===0)ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+  }
+
+  ctx.stroke();
+
+  ctx.shadowColor="rgba(255,159,28,.85)";
+  ctx.shadowBlur=12;
+  ctx.stroke();
+  ctx.shadowBlur=0;
+
+  waveT+=.035;
+  requestAnimationFrame(drawWave);
+}
+
+micButton.addEventListener("click",async()=>{
+  if(micActive)return;
+
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const AudioContext=window.AudioContext||window.webkitAudioContext;
+    const audioCtx=new AudioContext();
+    const source=audioCtx.createMediaStreamSource(stream);
+
+    analyser=audioCtx.createAnalyser();
+    analyser.fftSize=1024;
+    audioData=new Uint8Array(analyser.fftSize);
+
+    source.connect(analyser);
+    micActive=true;
+
+    micButton.classList.add("active");
+    micButton.textContent="MICROPHONE CHANNEL OPEN";
+  }catch(e){
+    micButton.textContent="CHANNEL CLOSED";
+    setTimeout(()=>micButton.textContent="OPEN MICROPHONE CHANNEL",1600);
+  }
+});
+
+drawWave();
+</script>
+</body>
+</html>
